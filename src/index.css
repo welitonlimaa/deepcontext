@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='3000' height='2500' preserveAspectRatio='none' viewBox='0 0 3000 2500'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1459%26quot%3b)' fill='none'%3e%3crect width='3000' height='2500' x='0' y='0' fill='url(%26quot%3b%23SvgjsLinearGradient1460%26quot%3b)'%3e%3c/rect%3e%3cpath d='M 0%2c227 C 200%2c327.4 600%2c739 1000%2c729 C 1400%2c719 1600%2c238 2000%2c177 C 2400%2c116 2800%2c374.6 3000%2c424L3000 2500L0 2500z' fill='rgba(13%2c 64%2c 118%2c 1)'%3e%3c/path%3e%3cpath d='M 0%2c1409 C 66.8%2c1357.4 200.4%2c1116.4 334%2c1151 C 467.6%2c1185.6 534.4%2c1572.8 668%2c1582 C 801.6%2c1591.2 868.4%2c1260 1002%2c1197 C 1135.6%2c1134 1202.4%2c1288.6 1336%2c1267 C 1469.6%2c1245.4 1536.4%2c1068.4 1670%2c1089 C 1803.6%2c1109.6 1870.4%2c1367.8 2004%2c1370 C 2137.6%2c1372.2 2204.4%2c1119.6 2338%2c1100 C 2471.6%2c1080.4 2539.6%2c1284 2672%2c1272 C 2804.4%2c1260 2934.4%2c1086.4 3000%2c1040L3000 2500L0 2500z' fill='%23184a7e'%3e%3c/path%3e%3cpath d='M 0%2c2222 C 120%2c2176.8 360%2c1993.4 600%2c1996 C 840%2c1998.6 960%2c2236.4 1200%2c2235 C 1440%2c2233.6 1560%2c2004 1800%2c1989 C 2040%2c1974 2160%2c2175.2 2400%2c2160 C 2640%2c2144.8 2880%2c1962.4 3000%2c1913L3000 2500L0 2500z' fill='%232264ab'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1459'%3e%3crect width='3000' height='2500' fill='white'%3e%3c/rect%3e%3c/mask%3e%3clinearGradient x1='4.17%25' y1='-5%25' x2='95.83%25' y2='105%25' gradientUnits='userSpaceOnUse' id='SvgjsLinearGradient1460'%3e%3cstop stop-color='%230e2a47' offset='0'%3e%3c/stop%3e%3cstop stop-color='rgba(0%2c 69%2c 158%2c 1)' offset='1'%3e%3c/stop%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e");
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+}
+
+@layer utilities {
+  .hero-gradient {
+    background: linear-gradient(180deg, #6600FF 0%, #3D0080 55%, #1a0040 100%);
+    height: 100vh;
+  }
+}
