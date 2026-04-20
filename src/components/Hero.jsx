@@ -263,7 +263,7 @@ export default function Hero() {
               href={downloadUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/90 underline hover:text-lg hover:text-white transition"
+              className="text-white/90 underline text-lg hover:text-base hover:text-white transition"
             >
               Baixar resultado
             </a>
