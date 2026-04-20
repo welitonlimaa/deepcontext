@@ -1,23 +1,19 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import { useJobProcessor } from "../hooks/useJobProcessor";
+import { motion, AnimatePresence } from "framer-motion";
 
 const MAX_SIZE_MB = 20;
 const MAX_PAGES = 150;
 
-const Hero = () => {
+export default function Hero() {
   const fileInputRef = useRef(null);
 
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
+  const [dragActive, setDragActive] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
 
-  const {
-    start,
-    status,
-    progress,
-    downloadUrl,
-    loading,
-  } = useJobProcessor();
+  const { start, reset, status, progress, downloadUrl, loading } = useJobProcessor();
 
   const getErrorMessage = (err) => {
     const detail = err?.response?.data?.detail;
@@ -35,6 +31,7 @@ const Hero = () => {
     return "Erro ao processar a requisição. Tente novamente.";
   };
 
+  // -------- PDF VALIDATION (RESTORED) --------
   let pdfjsInstance = null;
 
   const getPdfJs = async () => {
@@ -69,26 +66,31 @@ const Hero = () => {
     }
   };
 
-  const handleFileClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = async (e) => {
-    const selected = e.target.files?.[0];
-    if (!selected) return;
-
-    setError("");
-
+  // -------- FILE HANDLING --------
+  const onSelectFile = useCallback(async (f) => {
     try {
+      setError("");
       setIsValidating(true);
-      await validateFile(selected);
-      setFile(selected);
-    } catch (err) {
+      await validateFile(f);
+      setFile(f);
+    } catch (e) {
       setFile(null);
-      setError(err.message);
+      setError(e.message);
     } finally {
       setIsValidating(false);
     }
+  }, []);
+
+  const handleInput = (e) => {
+    const f = e.target.files?.[0];
+    if (f) onSelectFile(f);
+  };
+
+  const onDrop = (e) => {
+    e.preventDefault();
+    setDragActive(false);
+    const f = e.dataTransfer.files?.[0];
+    if (f) onSelectFile(f);
   };
 
   const handleGenerate = async () => {
@@ -104,98 +106,170 @@ const Hero = () => {
   };
 
   return (
-    <section className="w-full h-screen justify-center flex">
-      <div className="w-2/3 md:mt-40 p-4 mt-12">
-        <h1 className="w-full text-gray-300 font-black text-4xl md:text-5xl lg:text-6xl leading-tight mb-2">
+    <section className="w-full min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-2xl text-center">
+        {/* HEADER */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-white font-bold text-4xl md:text-5xl mb-4"
+        >
           Menos tokens,
-          <br />
-          mais contexto.
-        </h1>
+          <br /> mais contexto
+        </motion.h1>
 
-        <p className="text-gray-300 text-base md:text-lg mb-10 max-w-md leading-relaxed">
-          Transforme PDFs grandes em inputs eficientes para IA. Extraia, comprima e estruture contexto antes de enviar para o LLM
-        </p>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-gray-400 mb-10"
+        >
+          Otimize PDFs para LLMs com um pipeline inteligente.
+        </motion.p>
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        {/* DROPZONE */}
+        <motion.div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragActive(true);
+          }}
+          onDragLeave={() => setDragActive(false)}
+          onDrop={onDrop}
+          onClick={() => fileInputRef.current?.click()}
+          className={`relative cursor-pointer rounded-2xl border p-8 transition backdrop-blur-xl
+            ${dragActive ? "border-white bg-white/10" : "border-white/10 bg-white/5"}`}
+        >
           <input
             ref={fileInputRef}
             type="file"
-            className="hidden"
             accept=".pdf"
-            onChange={handleFileChange}
+            className="hidden"
+            onChange={handleInput}
           />
 
-          <button
-            onClick={handleFileClick}
-            className="border-2 border-gray text-gray-300 font-semibold text-sm px-8 py-4 rounded-full hover:bg-white/40 hover:text-white transition-colors w-full sm:w-auto disabled:opacity-50"
+          <AnimatePresence mode="wait">
+            {!file ? (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="text-gray-400"
+              >
+                <p className="text-lg font-medium text-white">
+                  Arraste seu PDF ou clique
+                </p>
+                <p className="text-sm">até 20MB • máx 150 páginas</p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="file"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center justify-between text-left"
+              >
+                <div>
+                  <p className="text-white text-sm font-medium truncate max-w-[180px]">
+                    {file.name}
+                  </p>
+                  <p className="text-gray-400 text-xs">
+                    {(file.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                </div>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setFile(null);
+                    setError("");
+                    reset();
+                  }}
+                  className="text-red-500 text-base hover:underline hover:text-lg transition"
+                >
+                  Remover
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* VALIDATING */}
+        {isValidating && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-4 text-gray-400 text-sm"
           >
-            {file ? "ARQUIVO SELECIONADO" : "ANEXAR ARQUIVO"}
-          </button>
-
-          <button
-            onClick={handleGenerate}
-            disabled={loading || !file || isValidating}
-            className="bg-gray-800/90 border-2 border-gray-800 text-white font-bold text-sm tracking-widest uppercase px-8 py-4 rounded-full hover:bg-gray-300/50 hover:border-3 hover:border-gray-300 transition-colors w-full sm:w-auto"
-          >
-            {isValidating ? "Validando..." : loading ? "Enviando..." : "Gerar"}
-          </button>
-        </div>
-
-        {file && (
-          <div className="md:w-2/5 w-full mt-4 p-4 rounded-xl border-1 border-gray-200 bg-gray-50/80 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-800">{file.name}</p>
-              <p className="text-xs text-gray-500">
-                {(file.size / 1024 / 1024).toFixed(2)} MB
-              </p>
-            </div>
-
-            <button
-              onClick={() => setFile(null)}
-              className="text-red-500 text-sm hover:underline"
-            >
-              Remover
-            </button>
-          </div>
+            Validando PDF...
+          </motion.div>
         )}
 
-        {/* erro */}
+        {/* ERROR */}
         {error && (
-          <div className="md:w-2/5 w-full mt-4 text-red-600 text-sm bg-white/70 p-2 rounded">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-4 text-red-400 text-sm text-left"
+          >
             {error}
-          </div>
+          </motion.div>
         )}
 
-        {status && (
-          <div className="mt-6 text-base text-gray-300/90">
-            <p className="mb-1">Status: {status}</p>
-
-            <div className="w-2/5 bg-gray-300/10 rounded-full h-4 overflow-hidden">
-              <div
-                className="bg-gray-300 h-4 transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-
-            <p className="mt-1">{progress.toFixed(1)}%</p>
-          </div>
+        {/* ACTION */}
+        {!status && (
+          <motion.button
+            onClick={handleGenerate}
+            disabled={!file || loading || isValidating}
+            whileTap={{ scale: 0.98 }}
+            className="mt-6 w-full md:w-2/5 bg-emerald-500 border-2 border-emerald-600 text-white py-3 rounded-xl font-semibold disabled:opacity-50 hover:bg-emerald-600 hover:border-emerald-500 hover:text-lg transition"
+          >
+            {isValidating
+              ? "Validando..."
+              : loading
+              ? "Processando..."
+              : "Gerar"}
+          </motion.button>
         )}
 
+        {/* PROGRESS */}
+        <AnimatePresence>
+          {status && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="mt-6"
+            >
+              <p className="text-white/80 text-sm">{status}</p>
+              <div className="w-full bg-white/10 h-3 rounded-full mt-2 overflow-hidden">
+                <motion.div
+                  className="bg-white h-3"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="text-xs text-white/80 mt-1">
+                {progress.toFixed(1)}%
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* DOWNLOAD */}
         {downloadUrl && (
-          <div className="mt-6">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6">
             <a
               href={downloadUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white font-semibold underline"
+              className="text-white/90 underline hover:text-lg hover:text-white transition"
             >
               Baixar resultado
             </a>
-          </div>
+          </motion.div>
         )}
       </div>
     </section>
   );
-};
-
-export default Hero;
+}

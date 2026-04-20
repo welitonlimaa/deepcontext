@@ -72,8 +72,16 @@ export function useJobProcessor() {
     }
   };
 
+  const reset = () => {
+    setJobId(null);
+    setStatus(null);
+    setProgress(0);
+    setDownloadUrl(null);
+  };
+
   return {
     start,
+    reset,
     jobId,
     status,
     progress,
