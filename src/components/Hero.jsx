@@ -222,7 +222,7 @@ export default function Hero() {
             onClick={handleGenerate}
             disabled={!file || loading || isValidating}
             whileTap={{ scale: 0.98 }}
-            className="mt-6 w-full md:w-2/5 bg-emerald-500 border-2 border-emerald-600 text-white py-3 rounded-xl font-semibold disabled:opacity-50 hover:bg-emerald-600 hover:border-emerald-500 hover:text-lg transition"
+            className="mt-6 w-full md:w-2/5 bg-emerald-500 border-2 border-emerald-600 text-white py-3 rounded-xl font-semibold disabled:opacity-80 hover:bg-emerald-600 hover:border-emerald-500 hover:text-lg transition disabled:hover:bg-emerald-500 disabled:hover:border-emerald-600 disabled:hover:text-white disabled:text-base"
           >
             {isValidating
               ? "Validando..."
