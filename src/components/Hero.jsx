@@ -2,8 +2,8 @@ import { useRef, useState, useCallback } from "react";
 import { useJobProcessor } from "../hooks/useJobProcessor";
 import { motion, AnimatePresence } from "framer-motion";
 
-const MAX_SIZE_MB = 20;
-const MAX_PAGES = 150;
+const MAX_SIZE_MB = 10;
+const MAX_PAGES = 200;
 
 export default function Hero() {
   const fileInputRef = useRef(null);
@@ -159,7 +159,7 @@ export default function Hero() {
                 <p className="text-lg font-medium text-white">
                   Arraste seu PDF ou clique
                 </p>
-                <p className="text-sm">até 20MB • máx 150 páginas</p>
+                <p className="text-sm">{'até '+MAX_SIZE_MB+'MB • máx '+MAX_PAGES+' páginas'}</p>
               </motion.div>
             ) : (
               <motion.div
