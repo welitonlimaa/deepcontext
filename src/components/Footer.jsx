@@ -1,9 +1,19 @@
 import InIcon from "../assets/in.svg";
 import GithubIcon from "../assets/github.svg";
 
+
 const footerLinks = {
-  "Learn more": ["Blog", "Case studies", "Customer stories", "Best practices"],
-  "Support": ["Contact", "Support", "Legal"],
+  "Learn more": [
+    { label: "Blog", href: "https://www.linkedin.com/in/welitonlimaa/" },
+    { label: "Doc", href: "https://github.com/welitonlimaa/deepcontext-ocr-pipeline/blob/main/README.md" },
+    { label: "Tutorials", href: "https://github.com/welitonlimaa/deepcontext-ocr-pipeline/blob/main/TUTORIALS.md" },
+    { label: "Best practices", href: "https://github.com/welitonlimaa/deepcontext-ocr-pipeline/blob/main/TUTORIALS.md" },
+  ],
+  Support: [
+    { label: "Contact", href: "https://mail.google.com/mail/?view=cm&to=welitonlimadev@gmail.com" },
+    { label: "Support", href: "https://mail.google.com/mail/?view=cm&to=welitonlimadev@gmail.com" },
+    { label: "Legal", href: "https://github.com/welitonlimaa/deepcontext-ocr-pipeline/blob/main/LEGAL.md" },
+  ],
 };
 
 const Footer = () => {
@@ -19,17 +29,28 @@ const Footer = () => {
             </p>
           </div>
           <div className="flex items-center gap-4 text-white/80">
-            <a href="#" className="w-8 fill-white hover:fill-white/50 transition" aria-label="Instagram">
+            <a 
+              href="https://www.linkedin.com/in/welitonlimaa/" 
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="w-8 fill-white hover:fill-white/50 transition" 
+              aria-label="linkedIn"
+            >
               <img 
                 src={InIcon} 
-                alt="LinkedIn" 
+                alt="linkedIn" 
                 className="w-8 fill-white hover:fill-white/50 transition"
               />
             </a>
-            <a href="#" aria-label="GitHub">
+            <a 
+              href="https://github.com/welitonlimaa/deepcontext-ocr-pipeline" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label="gitHub"
+            >
               <img 
                 src={GithubIcon} 
-                alt="GitHub"
+                alt="gitHub"
                 className="w-8 fill-white hover:fill-white/50 transition"
               />
             </a>
@@ -43,12 +64,14 @@ const Footer = () => {
               <p className="text-white font-bold text-sm mb-4">{section}</p>
               <ul className="flex flex-col gap-3">
                 {links.map((link) => (
-                  <li key={link}>
+                  <li key={link.label}>
                     <a
-                      href="#"
+                      href={link.href}
                       className="text-white/50 text-sm hover:text-white/80 transition-colors"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      {link}
+                      {link.label}
                     </a>
                   </li>
                 ))}
