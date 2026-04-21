@@ -105,6 +105,17 @@ export default function Hero() {
     }
   };
 
+  const handleReset = (e) => {
+    e.stopPropagation();
+    setFile(null);
+    setError("");
+    reset();
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   return (
     <section className="w-full min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-2xl text-center">
@@ -179,12 +190,7 @@ export default function Hero() {
                 </div>
 
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setFile(null);
-                    setError("");
-                    reset();
-                  }}
+                  onClick={(e) => handleReset(e)}
                   className="text-red-500 text-base hover:underline hover:text-lg transition"
                 >
                   Remover
